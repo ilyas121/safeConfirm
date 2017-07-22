@@ -1,7 +1,13 @@
 package com.hax3rzzz.safeconfirm;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.content.Intent;
 import android.telephony.SmsManager;
 import android.hardware.SensorEventListener;
@@ -31,6 +37,44 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void sendTXT(){
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage("7813011976", null, "UR FRIEND DON GOOFED", null, null);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+
+        final FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.power_button);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            boolean isGreen = true;
+            public void onClick(View v) {
+                if (isGreen) {
+                    myFab.setBackgroundTintList(myFab.getResources().getColorStateList(R.color.colorRed));
+                    isGreen = false;
+                } else {
+                    myFab.setBackgroundTintList(myFab.getResources().getColorStateList(R.color.colorGreen));
+                    isGreen = true;
+
+                }
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.preferences: {
+                Intent intent = new Intent();
+                intent.setClassName(this, "com.hax3rzzz.safeconfirm.MyPreferenceActivity");
+                startActivity(intent);
+                return true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public long map(long x, long in_min, long in_max, long out_min, long out_max)
@@ -108,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
 
