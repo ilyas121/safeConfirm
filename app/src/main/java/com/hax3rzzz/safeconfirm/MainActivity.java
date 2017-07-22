@@ -36,11 +36,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
     private long lastUpdate = 0;
+    double longitude;
+    double latitude;
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 600;
     LocationManager locationManager;
     String mprovider;
     boolean isGreen = true;
+    boolean display = false;
     private  double altitude = 0;
     float weightAC = 0;
     float weightGY = 0;
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         SmsManager smsManager = SmsManager.getDefault();
         Log.d("preTxt", "askdhfjkalsdhfkas");
 //        smsManager.sendTextMessage("4132753002", null, "U", null, null);
-        smsManager.sendTextMessage("9784139293", null, "U", null, null);
+        smsManager.sendTextMessage("9784139293", null, "John Smith is in trouble! Send help! ", null, null);
 
 //        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + "7813011976"));
 //        intent.putExtra("sms_body", "1234876178234");
@@ -191,11 +194,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         if (weightALT + weightAC + weightGY > 10) {
             Log.d("asdf", "" + (weightAC + weightALT + weightGY));
-            displayPrompt();
+            if (isGreen && !display) {
+                display = true;
+                displayPrompt();
+            }
             TextView status = (TextView) findViewById(R.id.textView);
             weight = weightAC + weightALT + weightGY;
             Log.d("hi", "hi");
-            status.setText("" + (weight/(30.0) * 100.0));
+            status.setText(String.format("%.2g", (weight/(30.0) * 100.0)) + "%");
         }
 
     }
@@ -206,6 +212,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //@Override
     public void onLocationChanged(Location loc) {
        altitude = loc.getAltitude();
+        longitude = loc.getLongitude();
+        latitude = loc.getLatitude();
+        Log.d("loclat", Double.toString(longitude));
         weightALT = map((float)altitude, 0, 50, 0, 10);
     }
 
@@ -220,17 +229,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void displayPrompt() {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle("Ya good?").setMessage("Confirm that you are not in danger");
-        dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+//
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle("Ya good?").setMessage("Are you in danger?");
+        dialog.setPositiveButton("Nope", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
 //                exitLauncher();
+                display = false;
+
             }
         });
-        dialog.setNegativeButton("Nope", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("Yep", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
-
+                display = false;
                 sendTXT();
                 Log.d("badSitch", "oh n0");
             }
@@ -244,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void run() {
                 if (alert.isShowing() && isGreen) {
+                    display = false;
                     sendTXT();
                     Log.d("badSitch", "oh n0");
                     alert.dismiss();
@@ -255,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onDismiss(DialogInterface dialog) {
                 handler.removeCallbacks(runnable);
+//                display = false;
             }
         });
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference android:title="Your Name"
+        android:key="username"
+        android:summary="Please provide your username"></EditTextPreference>
+    <EditTextPreference android:title="Phone Number"
+        android:key="phone"
+        android:summary="Please provide your phone number"></EditTextPreference>
+    <EditTextPreference android:title="Hometown"
+        android:key="home"
+        android:summary="Please provide your hometown"></EditTextPreference>
+    <EditTextPreference android:title="Emergency Contact"
+        android:key="contact"
+        android:summary="Please provide an emergency contact"></EditTextPreference>
+    <EditTextPreference android:title="Emergency Phone Num"
+        android:key="enum"
+        android:summary="Please provide a emergency phone number"></EditTextPreference>
+</PreferenceScreen>

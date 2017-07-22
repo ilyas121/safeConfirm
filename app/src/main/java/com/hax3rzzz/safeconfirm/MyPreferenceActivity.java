@@ -1,24 +1,25 @@
 package com.hax3rzzz.safeconfirm;
 
+import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 
-import java.util.List;
-
-/**
- * Created by MILESWT on 7/21/2017.
- */
-
-public class MyPreferenceActivity extends PreferenceActivity
-{
-    @Override
-    public void onBuildHeaders(List<Header> target)
-    {
-        loadHeadersFromResource(R.xml.headers_preference, target);
-    }
+public class MyPreferenceActivity extends PreferenceActivity {
 
     @Override
-    protected boolean isValidFragment(String fragmentName)
-    {
-        return MyPreferenceFragment.class.getName().equals(fragmentName);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
     }
+
+    public static class MyPreferenceFragment extends PreferenceFragment
+    {
+        @Override
+        public void onCreate(final Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+        }
+    }
+
 }
