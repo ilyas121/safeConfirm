@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.content.Intent;
 import android.telephony.SmsManager;
 import android.hardware.SensorEventListener;
 import android.hardware.Sensor;
@@ -16,13 +15,24 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.content.Context;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.util.Log;
+
+public class MainActivity extends AppCompatActivity implements SensorEventListener, LoadJSONTask.Listener {
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 600;
+
+    // MITRE Weather Station, Miles Wilhelms-Tricarico's API Key
+    public static final String URL = "http://api.wunderground.com/api/7ac454145bcfaa43/conditions/q/pws:KMABEDFO4.json";
+
+    private JSONArray categoriesArray = new JSONArray();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
+
+        new LoadJSONTask(this).execute(URL);
     }
 
     public void sendTXT(){
@@ -154,5 +166,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
+    @Override
+    public void onError() {
+    }
 
+    // WEATHER STUFF
+    public void onLoaded(JSONObject weatherObject) {
+        try {
+            String weatherDescr = weatherObject.getJSONObject("current_observation").getString("weather");
+            Log.d("weather", weatherDescr);
+            String temperature = weatherObject.getJSONObject("current_observation").getString("temp_f");
+            Log.d("weather", temperature);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
